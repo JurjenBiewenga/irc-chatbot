@@ -50,8 +50,6 @@ namespace IRC
 
                 var headers = response.Headers;
 
-                response.Close();
-
                 using (var reader = new StreamReader(response.GetResponseStream(), Encoding.ASCII))
                 {
                     var responseText = reader.ReadToEnd();
@@ -61,6 +59,7 @@ namespace IRC
 
                     Anxious.Send(room, outputText + ", " + Title.GetUser(text));
                 }
+                response.Close();
             }
             catch
             {
