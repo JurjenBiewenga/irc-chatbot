@@ -53,7 +53,7 @@ namespace IRC
                 using (var reader = new StreamReader(response.GetResponseStream(), Encoding.ASCII))
                 {
                     var responseText = reader.ReadToEnd();
-                    var responseObject = serializer.DeserializeObject(responseText) as Dictionary<string, string>>;
+                    var responseObject = serializer.DeserializeObject<Dictionary<string, string>>(responseText);
 
                     var outputText = responseObject["insult"];
 
