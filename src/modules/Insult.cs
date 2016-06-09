@@ -42,7 +42,7 @@ namespace IRC
         {
             try
             {
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(WebUtility.UrlEncode("http://quandyfactory.com/insult/json"));
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://quandyfactory.com/insult/json");
 
                 request.AllowAutoRedirect = false;
 
