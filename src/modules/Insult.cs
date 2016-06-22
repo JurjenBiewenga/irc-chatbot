@@ -24,7 +24,7 @@ namespace IRC
     {
 
         #region
-
+        static JavaScriptSerializer serializer = new JavaScriptSerializer();
         static HttpWebRequest request;
 
         /**
