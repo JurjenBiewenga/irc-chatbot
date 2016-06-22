@@ -56,7 +56,7 @@ namespace IRC
             }
         }
 
-        public static void AsyncResponse(IAsyncResult asynchronousResult)
+        private static void AsyncResponse(IAsyncResult asynchronousResult)
         {
             HttpWebRequest myHttpWebRequest = request;
             var response = (HttpWebResponse)myHttpWebRequest.EndGetResponse(asynchronousResult);
