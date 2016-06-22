@@ -17,15 +17,15 @@ using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Web.Script.Serialization;
 
 namespace IRC
 {
     public static class Insult
     {
-        static JavaScriptSerializer serializer = new JavaScriptSerializer();
 
         #region
+
+        static HttpWebRequest request;
 
         /**
          *  This event is called whenever someone, either in a private query
@@ -38,28 +38,17 @@ namespace IRC
          *  the target, else insert the rooms parameter. In the message part
          *  please keep the replies short to avoid sending too much flooding
          */
-        public static void OnMessage(string user, string room, string text)
+        public static async void OnMessage(string user, string room, string text)
         {
             try
             {
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://quandyfactory.com/insult/json");
 
+                request = (HttpWebRequest)WebRequest.Create("http://quandyfactory.com/insult/json");
                 request.AllowAutoRedirect = false;
 
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                request.BeginGetResponse(new AsyncCallback(AsyncResponse), null);
 
-                var headers = response.Headers;
 
-                using (var reader = new StreamReader(response.GetResponseStream(), Encoding.ASCII))
-                {
-                    var responseText = reader.ReadToEnd();
-                var responseObject = serializer.Deserialize<Dictionary<string, string>>(responseText);
-
-                    var outputText = responseObject["insult"];
-
-                    Anxious.Send(room, outputText + ", " + Title.GetUser(text));
-                }
-                response.Close();
             }
             catch
             {
@@ -67,6 +56,24 @@ namespace IRC
             }
         }
 
+        public static void AsyncResponse(IAsyncResult asynchronousResult)
+        {
+            HttpWebRequest myHttpWebRequest = request;
+            var response = (HttpWebResponse)myHttpWebRequest.EndGetResponse(asynchronousResult);
+
+
+            var headers = response.Headers;
+
+            using (var reader = new StreamReader(response.GetResponseStream(), Encoding.ASCII))
+            {
+                var responseText = reader.ReadToEnd();
+                var responseObject = serializer.Deserialize<Dictionary<string, string>>(responseText);
+
+                var outputText = responseObject["insult"];
+                Anxious.Send(room, outputText + ", " + Title.GetUser(text));
+            }
+            response.Close();
+        }
         #endregion
     }
 }
